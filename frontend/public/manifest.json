@@ -1,0 +1,74 @@
+{
+  "name": "SERENO - Bienestar Mental",
+  "short_name": "SERENO",
+  "description": "Aplicación de apoyo y seguimiento para la salud mental con herramientas de autoevaluación, ejercicios terapéuticos y sistema de apoyo comunitario",
+  "theme_color": "#6B73FF",
+  "background_color": "#F7F9FC",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "start_url": "/",
+  "lang": "es",
+  "categories": ["health", "medical", "wellness"],
+  "icons": [
+    {
+      "src": "/pwa-64x64.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    },
+    {
+      "src": "/pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/maskable-icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Evaluación de Ánimo",
+      "short_name": "Ánimo",
+      "description": "Registra cómo te sientes hoy",
+      "url": "/mood-assessment",
+      "icons": [
+        {
+          "src": "/pwa-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Ejercicios de Respiración",
+      "short_name": "Respiración",
+      "description": "Ejercicios guiados de respiración",
+      "url": "/breathing-exercise",
+      "icons": [
+        {
+          "src": "/pwa-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Emergencia",
+      "short_name": "SOS",
+      "description": "Activar sistema de apoyo de emergencia",
+      "url": "/emergency",
+      "icons": [
+        {
+          "src": "/pwa-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}

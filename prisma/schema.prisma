@@ -1,0 +1,376 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  username  String   @unique
+  password  String
+  country   String
+  role      UserRole @default(USER)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  profile        UserProfile?
+  moodEntries    MoodEntry[]
+  breathingExercises BreathingExercise[]
+  emergencyAlerts EmergencyAlert[]
+  chatChannels   ChatChannel[] @relation("ChatParticipants")
+  sentMessages   ChatMessage[]
+  activities     Activity[] @relation("ActivityParticipants")
+  organizedActivities Activity[] @relation("ActivityOrganizer")
+  fakeCallSettings FakeCallSettings?
+  fakeCalls      FakeCall[]
+  serenitoInteractions SerenitoInteraction[]
+  educationalContent EducationalContent[] @relation("EducationalContentAuthor")
+  contentProgress ContentProgress[]
+  notificationPreferences NotificationPreferences?
+  pushSubscriptions PushSubscription[]
+  notificationLogs NotificationLog[]
+
+  @@map("users")
+}
+
+model UserProfile {
+  id        String   @id @default(cuid())
+  userId    String   @unique @map("user_id")
+  firstName String?  @map("first_name")
+  lastName  String?  @map("last_name")
+  dateOfBirth DateTime? @map("date_of_birth")
+  mentalHealthConditions String[] @map("mental_health_conditions")
+  preferences Json?
+  emergencyContacts Json[] @map("emergency_contacts")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_profiles")
+}
+
+model MoodEntry {
+  id              String   @id @default(cuid())
+  userId          String   @map("user_id")
+  selectedEmotion Json     @map("selected_emotion")
+  textDescription String?  @map("text_description")
+  voiceRecordingUrl String? @map("voice_recording_url")
+  analysisResult  Json?    @map("analysis_result")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("mood_entries")
+}
+
+model BreathingExercise {
+  id            String   @id @default(cuid())
+  userId        String   @map("user_id")
+  configuration Json
+  duration      Int      // in seconds
+  completedAt   DateTime @default(now()) @map("completed_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("breathing_exercises")
+}
+
+model EmergencyAlert {
+  id                String   @id @default(cuid())
+  userId            String   @map("user_id")
+  location          Json?
+  status            EmergencyStatus @default(ACTIVE)
+  respondingSerenos String[] @map("responding_serenos")
+  officialContactsNotified String[] @map("official_contacts_notified")
+  createdAt         DateTime @default(now()) @map("created_at")
+  resolvedAt        DateTime? @map("resolved_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chatChannels ChatChannel[]
+
+  @@map("emergency_alerts")
+}
+
+model EmergencyContact {
+  id          String   @id @default(cuid())
+  country     String
+  name        String
+  phoneNumber String   @map("phone_number")
+  type        EmergencyContactType
+  available24h Boolean @map("available_24h") @default(true)
+  autoContact Boolean  @map("auto_contact") @default(false)
+  description String?
+  website     String?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("emergency_contacts")
+}
+
+model ChatChannel {
+  id               String      @id @default(cuid())
+  type             ChatType
+  emergencyAlertId String?     @map("emergency_alert_id")
+  createdAt        DateTime    @default(now()) @map("created_at")
+
+  // Relations
+  participants User[] @relation("ChatParticipants")
+  messages     ChatMessage[]
+  emergencyAlert EmergencyAlert? @relation(fields: [emergencyAlertId], references: [id])
+
+  @@map("chat_channels")
+}
+
+model ChatMessage {
+  id        String      @id @default(cuid())
+  channelId String      @map("channel_id")
+  senderId  String      @map("sender_id")
+  content   String
+  type      MessageType @default(TEXT)
+  createdAt DateTime    @default(now()) @map("created_at")
+
+  // Relations
+  channel ChatChannel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  sender  User        @relation(fields: [senderId], references: [id])
+
+  @@map("chat_messages")
+}
+
+model Activity {
+  id               String           @id @default(cuid())
+  title            String
+  description      String
+  country          String
+  category         ActivityCategory
+  eventDate        DateTime         @map("event_date")
+  location         String
+  organizerId      String           @map("organizer_id")
+  maxParticipants  Int?             @map("max_participants")
+  createdAt        DateTime         @default(now()) @map("created_at")
+
+  // Relations
+  organizer        User   @relation("ActivityOrganizer", fields: [organizerId], references: [id])
+  registeredUsers  User[] @relation("ActivityParticipants")
+
+  @@map("activities")
+}
+
+model FakeCallSettings {
+  id        String   @id @default(cuid())
+  userId    String   @unique @map("user_id")
+  enabled   Boolean  @default(true)
+  frequency FakeCallFrequency @default(RANDOM)
+  timeStart String   @map("time_start") @default("09:00")
+  timeEnd   String   @map("time_end") @default("21:00")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("fake_call_settings")
+}
+
+model FakeCall {
+  id             String   @id @default(cuid())
+  userId         String   @map("user_id")
+  scheduledTime  DateTime @map("scheduled_time")
+  answered       Boolean  @default(false)
+  redirectAction String   @map("redirect_action")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("fake_calls")
+}
+
+model SerenitoInteraction {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  context   String
+  expression String
+  message   String
+  animation String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("serenito_interactions")
+}
+
+model DailyTracking {
+  id             String   @id @default(cuid())
+  userId         String   @map("user_id")
+  confidenceLevel Int     @map("confidence_level") // 1-10 scale
+  emotionalState Json     @map("emotional_state")
+  notes          String?
+  date           DateTime @default(now())
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  @@map("daily_tracking")
+}
+
+model EducationalContent {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  content     String   // Rich text content
+  category    EducationalCategory
+  mentalHealthConditions String[] @map("mental_health_conditions")
+  difficulty  ContentDifficulty @default(BEGINNER)
+  duration    Int?     // Estimated reading/completion time in minutes
+  tags        String[]
+  isPublished Boolean  @default(false) @map("is_published")
+  authorId    String   @map("author_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  author      User     @relation("EducationalContentAuthor", fields: [authorId], references: [id])
+  progress    ContentProgress[]
+
+  @@map("educational_content")
+}
+
+model ContentProgress {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  contentId String   @map("content_id")
+  completed Boolean  @default(false)
+  progress  Float    @default(0) // 0-1 scale
+  timeSpent Int      @default(0) @map("time_spent") // in seconds
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  user    User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content EducationalContent @relation(fields: [contentId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, contentId])
+  @@map("content_progress")
+}
+
+model NotificationPreferences {
+  id              String   @id @default(cuid())
+  userId          String   @unique @map("user_id")
+  emergencyAlerts Boolean  @default(true) @map("emergency_alerts")
+  dailyReminders  Boolean  @default(true) @map("daily_reminders")
+  activityUpdates Boolean  @default(true) @map("activity_updates")
+  serenoResponses Boolean  @default(true) @map("sereno_responses")
+  pushEnabled     Boolean  @default(true) @map("push_enabled")
+  emailEnabled    Boolean  @default(false) @map("email_enabled")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notification_preferences")
+}
+
+model PushSubscription {
+  id         String   @id @default(cuid())
+  userId     String   @map("user_id")
+  endpoint   String
+  keys       String   // JSON string containing p256dh and auth keys
+  deviceInfo String?  @map("device_info") // JSON string with device information
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, endpoint])
+  @@map("push_subscriptions")
+}
+
+model NotificationLog {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  type      String
+  title     String
+  body      String
+  status    NotificationStatus
+  error     String?
+  payload   String   // JSON string of the full payload
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notification_logs")
+}
+
+// Enums
+enum UserRole {
+  USER
+  SERENO
+  ADMIN
+}
+
+enum EmergencyStatus {
+  ACTIVE
+  RESPONDED
+  RESOLVED
+}
+
+enum EmergencyContactType {
+  CRISIS_HOTLINE
+  EMERGENCY_SERVICES
+  MENTAL_HEALTH_FACILITY
+}
+
+enum ChatType {
+  EMERGENCY
+  GROUP
+  INDIVIDUAL
+}
+
+enum MessageType {
+  TEXT
+  SYSTEM
+}
+
+enum ActivityCategory {
+  GROUP_THERAPY
+  MINDFULNESS
+  SUPPORT_GROUP
+  WELLNESS_WORKSHOP
+}
+
+enum FakeCallFrequency {
+  DAILY
+  WEEKLY
+  RANDOM
+}
+
+enum EducationalCategory {
+  ARTICLE
+  EXERCISE
+  VIDEO
+  AUDIO
+  INTERACTIVE
+  WORKSHEET
+}
+
+enum ContentDifficulty {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum NotificationStatus {
+  SENT
+  FAILED
+  ERROR
+}

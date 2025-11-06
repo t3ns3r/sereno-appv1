@@ -1,0 +1,297 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Senior-friendly base styles */
+@layer base {
+  html {
+    font-size: 18px; /* Larger base font size for seniors */
+  }
+  
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    line-height: 1.6;
+    color: theme('colors.gray.700');
+  }
+  
+  /* Ensure minimum touch target size for mobile */
+  button, a, input, select, textarea {
+    min-height: 44px;
+  }
+  
+  /* High contrast focus styles for accessibility */
+  *:focus {
+    outline: 3px solid theme('colors.primary.500');
+    outline-offset: 2px;
+  }
+}
+
+/* Senior-friendly component styles */
+@layer components {
+  /* Standard senior button */
+  .btn-senior {
+    @apply min-h-[60px] min-w-[120px] px-6 py-4 text-lg font-semibold rounded-xl shadow-lg transition-all duration-300 ease-in-out;
+  }
+  
+  .btn-senior:hover {
+    @apply shadow-xl transform scale-105;
+  }
+  
+  .btn-senior:active {
+    @apply transform scale-95;
+  }
+  
+  /* Primary button */
+  .btn-primary {
+    @apply btn-senior bg-primary-500 text-white hover:bg-primary-600;
+  }
+  
+  /* Secondary button */
+  .btn-secondary {
+    @apply btn-senior bg-secondary-400 text-white hover:bg-secondary-500;
+  }
+  
+  /* Emergency button */
+  .btn-emergency {
+    @apply min-h-[80px] min-w-[80px] bg-emergency-400 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out;
+  }
+  
+  .btn-emergency:hover {
+    @apply bg-emergency-500 transform scale-105;
+  }
+  
+  /* Large navigation buttons for home screen */
+  .btn-nav-large {
+    @apply btn-senior h-24 w-full flex flex-col items-center justify-center space-y-2 bg-white hover:bg-gray-50 text-gray-700 border-2 border-gray-200;
+  }
+  
+  /* Card styles */
+  .card-senior {
+    @apply bg-white rounded-xl shadow-lg p-6 border border-gray-200;
+  }
+  
+  /* Input styles */
+  .input-senior {
+    @apply min-h-[50px] px-4 py-3 text-lg border-2 border-gray-300 rounded-xl focus:border-primary-500 focus:ring-0;
+  }
+  
+  /* SERENITO character container */
+  .serenito-container {
+    @apply relative w-24 h-24 mx-auto mb-4;
+  }
+  
+  /* Breathing exercise visual guide */
+  .breathing-circle {
+    @apply w-32 h-32 rounded-full border-4 border-primary-500 flex items-center justify-center mx-auto;
+  }
+  
+  /* Mood face selection */
+  .mood-face {
+    @apply w-16 h-16 rounded-full border-2 border-gray-300 flex items-center justify-center text-2xl cursor-pointer transition-all duration-200 hover:border-primary-500 hover:scale-110;
+  }
+  
+  .mood-face.selected {
+    @apply border-primary-500 bg-primary-50 scale-110;
+  }
+  
+  /* Emergency contact card */
+  .emergency-contact {
+    @apply card-senior hover:shadow-xl cursor-pointer transition-all duration-200;
+  }
+  
+  /* Activity card */
+  .activity-card {
+    @apply card-senior hover:shadow-xl transition-all duration-200 cursor-pointer;
+  }
+  
+  /* Progress visualization */
+  .progress-bar {
+    @apply w-full h-4 bg-gray-200 rounded-full overflow-hidden;
+  }
+  
+  .progress-fill {
+    @apply h-full bg-gradient-to-r from-secondary-400 to-primary-500 transition-all duration-500 ease-out;
+  }
+}
+
+/* Keyframe animations */
+@keyframes gentle-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes breathing-guide {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+@keyframes gentle-slide-in {
+  0% { transform: translateY(20px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes float-gentle {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200px 0; }
+  100% { background-position: calc(200px + 100%) 0; }
+}
+
+@keyframes wave-subtle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(1deg); }
+  75% { transform: rotate(-1deg); }
+}
+
+/* Utility classes for animations */
+@layer utilities {
+  .animate-gentle-entrance {
+    animation: gentle-slide-in 0.8s ease-out;
+  }
+  
+  .animate-breathing {
+    animation: breathing-guide 4s infinite ease-in-out;
+  }
+  
+  .animate-celebration {
+    animation: gentle-bounce 1.2s ease-in-out;
+  }
+  
+  .animate-float {
+    animation: float-gentle 3s ease-in-out infinite;
+  }
+  
+  .animate-shimmer {
+    animation: shimmer 2s infinite;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    background-size: 200px 100%;
+  }
+  
+  .animate-wave {
+    animation: wave-subtle 4s ease-in-out infinite;
+  }
+  
+  /* Gradient backgrounds */
+  .bg-sky-gradient {
+    background: linear-gradient(135deg, theme('colors.sky-gradient.from') 0%, theme('colors.sky-gradient.to') 100%);
+  }
+  
+  .bg-sereno-gradient {
+    background: linear-gradient(135deg, theme('colors.primary.500') 0%, theme('colors.secondary.400') 100%);
+  }
+  
+  /* Pintoresco nature-inspired backgrounds */
+  .bg-nature-gradient {
+    background: linear-gradient(135deg, #E8F5E8 0%, #F0F8FF 50%, #FFF8DC 100%);
+  }
+  
+  .bg-sunset-gradient {
+    background: linear-gradient(135deg, #FFE4B5 0%, #FFB347 50%, #FF6B6B 100%);
+  }
+  
+  .bg-ocean-gradient {
+    background: linear-gradient(135deg, #E0F6FF 0%, #87CEEB 50%, #4682B4 100%);
+  }
+  
+  /* Text shadows for better readability */
+  .text-shadow {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+  
+  .text-shadow-lg {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}  /*
+ Range slider styles for senior-friendly interface */
+  .slider {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .slider::-webkit-slider-track {
+    background: #e5e7eb;
+    height: 8px;
+    border-radius: 4px;
+  }
+
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    background: #6366f1;
+    height: 24px;
+    width: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+  }
+
+  .slider::-webkit-slider-thumb:hover {
+    background: #4f46e5;
+    transform: scale(1.1);
+  }
+
+  .slider::-moz-range-track {
+    background: #e5e7eb;
+    height: 8px;
+    border-radius: 4px;
+    border: none;
+  }
+
+  .slider::-moz-range-thumb {
+    background: #6366f1;
+    height: 24px;
+    width: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+  }
+
+  .slider::-moz-range-thumb:hover {
+    background: #4f46e5;
+    transform: scale(1.1);
+  }
+
+  /* Progress bar animations */
+  @keyframes progress-fill {
+    from {
+      width: 0%;
+    }
+    to {
+      width: var(--progress-width);
+    }
+  }
+
+  .progress-bar {
+    animation: progress-fill 1s ease-out forwards;
+  }
